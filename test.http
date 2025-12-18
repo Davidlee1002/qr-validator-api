@@ -1,0 +1,44 @@
+### 健康检查 - 二维码
+GET http://localhost:8080/api/v1/qrcode/health
+
+### 健康检查 - 验证
+GET http://localhost:8080/api/v1/validate/health
+
+
+### 生成二维码
+POST http://localhost:8080/api/v1/qrcode/generate
+Content-Type: application/json
+
+{
+  "content": "https://www.example.com",
+  "size": 300,
+  "format": "PNG"
+}
+
+### 验证邮箱
+POST http://localhost:8080/api/v1/validate/email
+Content-Type: application/json
+
+{
+  "email": "test@gmail.com",
+  "checkMx": true,
+  "checkDisposable": true
+}
+
+### 验证电话号码 - 美国
+POST http://localhost:8080/api/v1/validate/phone
+Content-Type: application/json
+
+{
+  "phoneNumber": "+1-202-555-0173",
+  "countryCode": "US"
+}
+
+### 验证电话号码 - 中国
+POST http://localhost:8080/api/v1/validate/phone
+Content-Type: application/json
+
+{
+  "phoneNumber": "13800138000",
+  "countryCode": "CN"
+}
