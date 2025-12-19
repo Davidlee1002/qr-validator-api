@@ -1,14 +1,28 @@
-# 1. 换用 Eclipse Temurin 镜像 (这是目前最推荐的 JDK 17 镜像)
-FROM eclipse-temurin:17-jdk-jammy
+# --------- 第一阶段：编译构建 (Build Stage) ---------
+# 使用带有 Maven 和 JDK 17 的官方镜像
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# 2. 设定工作目录
+# 设置工作目录
 WORKDIR /app
 
-# 3. 复制 Jar 包
-COPY target/*.jar app.jar
+# 把项目所有文件复制进去
+COPY . .
 
-# 4. 暴露端口
+# 执行 Maven 打包 (跳过测试以加快速度)
+RUN mvn clean package -DskipTests
+
+# --------- 第二阶段：运行环境 (Run Stage) ---------
+# 使用轻量级的 JDK 17 运行镜像
+FROM eclipse-temurin:17-jdk-jammy
+
+WORKDIR /app
+
+# 从第一阶段(build)把生成的 jar 包复制过来
+# 注意：这里我们精确指定文件名，防止复制错
+COPY --from=build /app/target/qr-validator-api-0.0.1-SNAPSHOT.jar app.jar
+
+# 暴露端口
 EXPOSE 8080
 
-# 5. 启动命令
+# 启动命令
 ENTRYPOINT ["java", "-jar", "app.jar"]
